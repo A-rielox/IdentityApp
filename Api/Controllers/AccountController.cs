@@ -27,14 +27,18 @@ public class AccountController : ControllerBase
         _signInManager = signInManager;
         _userManager = userManager;
     }
+    /////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     [Authorize]
     [HttpGet("refresh-user-token")]
     public async Task<ActionResult<UserDto>> RefreshUserToken()
     {
-        var user = await _userManager.FindByNameAsync(User.FindFirst(ClaimTypes.Email)?.Value);
+        var user = await _userManager.FindByNameAsync(User.FindFirst(ClaimTypes.Email)?.Value); // en el UserName tengo el email
         return CreateApplicationUserDto(user);
     }
+    /////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto model)
@@ -49,6 +53,8 @@ public class AccountController : ControllerBase
 
         return CreateApplicationUserDto(user);
     }
+    /////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterDto model)
@@ -62,7 +68,7 @@ public class AccountController : ControllerBase
         {
             FirstName = model.FirstName.ToLower(),
             LastName = model.LastName.ToLower(),
-            UserName = model.Email.ToLower(),
+            UserName = model.Email.ToLower(),//<<-----------    pone el email
             Email = model.Email.ToLower(),
             EmailConfirmed = true
         };
@@ -71,8 +77,13 @@ public class AccountController : ControllerBase
         var result = await _userManager.CreateAsync(userToAdd, model.Password);
         if (!result.Succeeded) return BadRequest(result.Errors);
 
-        return Ok("Your account has been created, you can login");
+        return Ok(new JsonResult(new { title = "Account Created", message = "Your account has been created, you can login" }));
+        // la respuesta que va a recibir angular va a ser un object q va a tener:
+        // value: { title: 'Account Created', message: 'Your account has been created, you can login'}
+        // lo hace p' pasar esto directo al modal de cuenta creada
     }
+    /////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     #region Private Helper Methods
     private UserDto CreateApplicationUserDto(User user)
@@ -84,6 +95,8 @@ public class AccountController : ControllerBase
             JWT = _jwtService.CreateJWT(user),
         };
     }
+    /////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     private async Task<bool> CheckEmailExistsAsync(string email)
     {

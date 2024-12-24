@@ -4,11 +4,13 @@ using Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using System.Linq;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,10 +73,39 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 
+builder.Services.AddCors();
+
+
+// p'q me haga el flatten en los errores de validacion de los endpoints
+// en errores me mandaba un object con los errores de cada input en un object separado
+// ahora en errores es un object con todos los mensajes de errores
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = actionContext =>
+    {
+        var errors = actionContext.ModelState
+                                    .Where(x => x.Value.Errors.Count > 0)
+                                    .SelectMany(x => x.Value.Errors)
+                                    .Select(x => x.ErrorMessage).ToArray();
+
+        var toReturn = new
+        {
+            Errors = errors
+        };
+
+        return new BadRequestObjectResult(toReturn);
+    };
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseCors(opt =>
+{
+    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
+});
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
