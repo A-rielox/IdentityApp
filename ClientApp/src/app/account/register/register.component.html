@@ -22,6 +22,7 @@
             [class.is-invalid]="
               submitted && registerForm.get('firstName')?.errors
             "
+            id="firstName"
           />
           <label for="firstName">First name</label>
           <span
@@ -53,6 +54,7 @@
             [class.is-invalid]="
               submitted && registerForm.get('lastName')?.errors
             "
+            id="lastName"
           />
           <label for="lastName">Last name</label>
           <span
@@ -82,6 +84,7 @@
             placeholder="Email"
             class="form-control"
             [class.is-invalid]="submitted && registerForm.get('email')?.errors"
+            id="email"
           />
           <label for="email">Email</label>
           <span
@@ -107,6 +110,7 @@
             [class.is-invalid]="
               submitted && registerForm.get('password')?.errors
             "
+            id="password"
           />
           <label for="password">Password</label>
           <span

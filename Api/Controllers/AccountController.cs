@@ -2,7 +2,6 @@
 using Api.Models;
 using Api.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,8 +28,16 @@ public class AccountController : ControllerBase
     }
     /////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////
+    /*
+    let headers = new HttpHeaders();
+    headers = headers.set('Authorization', 'Bearer ' + jwt);
 
-    [Authorize]
+    return this.http
+      .get<User>(`${environment.appUrl}/api/account/refresh-user-token`, { headers })
+      .pipe( ...
+    */
+
+    [Authorize] // angular va a mandar directo un request con un header con Bearer token ...
     [HttpGet("refresh-user-token")]
     public async Task<ActionResult<UserDto>> RefreshUserToken()
     {

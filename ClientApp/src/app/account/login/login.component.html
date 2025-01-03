@@ -7,12 +7,12 @@
         </div>
         <div class="form-floating mb-3">
           <input
-            value="test@mail.com"
             formControlName="userName"
             type="text"
             placeholder="Username (your email address)"
             class="form-control"
             [class.is-invalid]="submitted && loginForm.get('userName')?.errors"
+            id="userName"
           />
           <label for="userName">Username (your email address)</label>
           <span
@@ -25,12 +25,12 @@
 
         <div class="form-floating mb-3">
           <input
-            value="123456"
             formControlName="password"
             type="password"
             placeholder="Password"
             class="form-control"
             [class.is-invalid]="submitted && loginForm.get('userName')?.errors"
+            id="password"
           />
           <label for="password">Password</label>
           <span
