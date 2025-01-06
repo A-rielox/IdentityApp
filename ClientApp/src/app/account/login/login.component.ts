@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from '../account.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { take } from 'rxjs';
-import { User } from 'src/app/shared/models/user';
+import { User } from 'src/app/shared/models/account/user';
 
 @Component({
   selector: 'app-login',
@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
 
   initializeForm() {
     this.loginForm = this.formBuilder.group({
-      userName: ['test@mail.com', Validators.required],
+      userName: ['arielox@hotmail.com', Validators.required],
       password: ['123456', Validators.required],
     });
   }
@@ -72,5 +72,11 @@ export class LoginComponent implements OnInit {
         },
       });
     }
+  }
+
+  resendEmailConfirmationLink() {
+    this.router.navigateByUrl(
+      '/account/send-email/resend-email-confirmation-link'
+    );
   }
 }
