@@ -6,6 +6,8 @@ import { SharedService } from 'src/app/shared/shared.service';
 import { take } from 'rxjs';
 import { User } from 'src/app/shared/models/account/user';
 
+declare const FB: any;
+
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -69,4 +71,52 @@ export class RegisterComponent implements OnInit {
       });
     }
   }
+
+  //
+  //
+  registerWithFacebook() {
+    FB.login(async (fbResult: any) => {
+      if (fbResult.authResponse) {
+        const accessToken = fbResult.authResponse.accessToken;
+        const userId = fbResult.authResponse.userID;
+
+        this.router.navigateByUrl(
+          `/account/register/third-party/facebook?access_token=${accessToken}&userId=${userId}`
+        );
+      } else {
+        this.sharedService.showNotification(
+          false,
+          'Failed',
+          'Unable to register with your facebook'
+        );
+      }
+    });
+  }
+
+  // private initiazeGoogleButton() {
+  //   (window as any).onGoogleLibraryLoad = () => {
+  //     // @ts-ignore
+  //     google.accounts.id.initialize({
+  //       client_id:
+  //         '473473414260-dvfr4pp0jaipd3h86i283q3te3c6kp8m.apps.googleusercontent.com',
+  //       callback: this.googleCallBack.bind(this),
+  //       auto_select: false,
+  //       cancel_on_tap_outside: true,
+  //     });
+  //     // @ts-ignore
+  //     google.accounts.id.renderButton(this.googleButton.nativeElement, {
+  //       size: 'medium',
+  //       shape: 'rectangular',
+  //       text: 'signup_with',
+  //       logo_alignment: 'center',
+  //     });
+  //   };
+  // }
+
+  // private async googleCallBack(response: CredentialResponse) {
+  //   const decodedToken: any = jwt_decode(response.credential);
+  //   this.router.navigateByUrl(
+  //     `/account/register/third-party/google?access_token=${response.credential}&userId=${decodedToken.sub}`
+  //   );
+  // }
 }
