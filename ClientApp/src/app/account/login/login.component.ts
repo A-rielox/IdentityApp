@@ -4,6 +4,9 @@ import { AccountService } from '../account.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { take } from 'rxjs';
 import { User } from 'src/app/shared/models/account/user';
+import { LoginWithExternal } from 'src/app/shared/models/account/loginWithExternal';
+import { SharedService } from 'src/app/shared/shared.service';
+declare const FB: any;
 
 @Component({
   selector: 'app-login',
@@ -20,7 +23,8 @@ export class LoginComponent implements OnInit {
     private accountService: AccountService,
     private formBuilder: FormBuilder,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private sharedService: SharedService
   ) {
     this.accountService.user$.pipe(take(1)).subscribe({
       next: (user: User | null) => {
@@ -72,6 +76,38 @@ export class LoginComponent implements OnInit {
         },
       });
     }
+  }
+
+  loginWithFacebook() {
+    FB.login(async (fbResult: any) => {
+      if (fbResult.authResponse) {
+        const accessToken = fbResult.authResponse.accessToken;
+        const userId = fbResult.authResponse.userID;
+
+        this.accountService
+          .loginWithThirdParty(
+            new LoginWithExternal(accessToken, userId, 'facebook')
+          )
+          .subscribe({
+            next: () => {
+              if (this.returnUrl) {
+                this.router.navigateByUrl(this.returnUrl);
+              } else {
+                this.router.navigateByUrl('/');
+              }
+            },
+            error: (error) => {
+              this.sharedService.showNotification(false, 'Failed', error.error);
+            },
+          });
+      } else {
+        this.sharedService.showNotification(
+          false,
+          'Failed',
+          'Unable to login with your facebook'
+        );
+      }
+    });
   }
 
   resendEmailConfirmationLink() {
