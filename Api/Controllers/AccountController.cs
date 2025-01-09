@@ -101,10 +101,10 @@ public class AccountController : ControllerBase
         {
             try
             {
-                //if (!GoogleValidatedAsync(model.AccessToken, model.UserId).GetAwaiter().GetResult())
-                //{
-                //    return Unauthorized("Unable to login with google");
-                //}
+                if (!GoogleValidatedAsync(model.AccessToken, model.UserId).GetAwaiter().GetResult())
+                {
+                    return Unauthorized("Unable to login with google");
+                }
             }
             catch (Exception)
             {
